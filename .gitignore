@@ -1,15 +1,191 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# ===========================================
+# .gitignore - Android Studio + Web Projects
+# ===========================================
+
+##########################
+# Android Studio / Gradle
+##########################
+
+# Gradle
+.gradle/
+build/
+*/build/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+gradle-app.setting
 local.properties
+
+# Log files
+*.log
+
+# Android
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+*.iml
+
+# Android captures
+captures/
+output.json
+
+# NDK / CMake / Native
+.externalNativeBuild/
+.cxx/
+
+##########################
+# Android Studio IDE files
+##########################
+.idea/
+*.iws
+*.ipr
+*.iml
+.idea/caches/
+.idea/libraries/
+.idea/shelf/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/modules.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries/
+.idea/httpRequests/
+.idea/inspectionProfiles/
+
+##########################
+# JetBrains / IntelliJ
+##########################
+out/
+build/
+*.iml
+*.ipr
+*.iws
+.idea/
+
+##########################
+# Web / Frontend
+##########################
+# Node / NPM
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnp.*
+.pnp.js
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+tmp/
+temp/
+.cache/
+.vscode/
+
+# Frameworks comunes
+.next/
+.nuxt/
+out/
+.svelte-kit/
+.angular/
+.storybook/
+
+# Coverage / Testing
+coverage/
+.nyc_output/
+jest-test-results.json
+test-results.xml
+
+##########################
+# OS-specific
+##########################
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+.nfs*
+
+##########################
+# Backup & Temp Files
+##########################
+*.swp
+*.swo
+*.bak
+*.tmp
+*.orig
+*.old
+*.rej
+
+##########################
+# IDEs comunes adicionales
+##########################
+# Visual Studio Code
+.vscode/
+.history/
+*.code-workspace
+
+# Eclipse / NetBeans / VS
+.classpath
+.project
+.settings/
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+##########################
+# Firebase / Google Services
+##########################
+google-services.json
+GoogleService-Info.plist
+
+##########################
+# Keystores / Firmas
+##########################
+*.jks
+*.keystore
+*.key
+*.pem
+*.p12
+
+##########################
+# Misc
+##########################
+# ProGuard
+proguard/
+*.mapping
+
+# Lint
+lint/intermediates/
+lint/generated/
+lint/tmp/
+lint/reports/
+
+##########################
+# Backup / Export exclusions
+##########################
+# Solo se versiona el código fuente y configuraciones necesarias
+# No incluir backups, binarios, ni archivos temporales
+*.zip
+*.rar
+*.tar.gz
+*.7z
+*.bak
+*.tmp
+*.old
+*.log
