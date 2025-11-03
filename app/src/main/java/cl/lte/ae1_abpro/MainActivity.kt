@@ -2,6 +2,7 @@ package cl.lte.ae1_abpro
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -14,11 +15,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var listaEventos = mutableListOf<Evento>()
 
+    /**
+     * Función principal que se ejecuta al crear la pantalla.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -26,9 +31,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupListeners()
-        actualizarListaEventos() // Mostrar estado inicial
+        actualizarListaEventos()
     }
 
+    /**
+     * Agrupa la configuración de todos los listeners (eventos de clic) de la app.
+     */
     private fun setupListeners() {
         binding.dateEditText.setOnClickListener {
             showDatePickerDialog()
@@ -55,21 +63,43 @@ class MainActivity : AppCompatActivity() {
             actualizarListaEventos(eventosFiltrados)
         }
 
+        // Al hacer clic en Ordenar, ahora se muestra un diálogo de selección.
         binding.sortButton.setOnClickListener {
-            val eventosOrdenados = listaEventos.sortedBy { it.fecha }
-            actualizarListaEventos(eventosOrdenados)
+            showSortDialog()
         }
 
         binding.clearButton.setOnClickListener {
             binding.filterEditText.text.clear()
-            actualizarListaEventos() // Muestra la lista original
+            actualizarListaEventos()
         }
 
         binding.closeAppButton.setOnClickListener {
-            finish() // Cierra la actividad actual y, por tanto, la aplicación.
+            finish()
         }
     }
 
+    /**
+     * Muestra un diálogo para que el usuario elija cómo ordenar la lista.
+     */
+    private fun showSortDialog() {
+        val options = arrayOf("Por Fecha", "Por Título (A-Z)")
+
+        AlertDialog.Builder(this)
+            .setTitle("Ordenar eventos por:")
+            .setItems(options) { _, which ->
+                val sortedList = when (which) {
+                    0 -> listaEventos.sortedBy { it.fecha }      // Opción 0: Ordenar por fecha
+                    1 -> listaEventos.sortedBy { it.titulo }      // Opción 1: Ordenar por título
+                    else -> listaEventos // Por si acaso, devuelve la lista sin cambios
+                }
+                actualizarListaEventos(sortedList)
+            }
+            .show()
+    }
+
+    /**
+     * Muestra un diálogo con un calendario para seleccionar una fecha.
+     */
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -78,7 +108,6 @@ class MainActivity : AppCompatActivity() {
 
         val datePickerDialog = DatePickerDialog(this,
             { _, selectedYear, selectedMonth, selectedDay ->
-                // El mes se basa en 0, por lo que sumamos 1
                 val formattedDate = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
                 binding.dateEditText.setText(formattedDate)
             }, year, month, day)
@@ -87,8 +116,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Actualiza el TextView que muestra la lista de eventos.
-     * @param eventos La lista de eventos a mostrar. Por defecto, muestra la lista principal.
+     * Actualiza el TextView en la pantalla para mostrar la lista de eventos actual.
+     * @param eventos La lista que se va a mostrar. Por defecto, usa la lista principal.
      */
     private fun actualizarListaEventos(eventos: List<Evento> = listaEventos) {
         binding.eventsListTextView.run {
@@ -103,6 +132,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Limpia los campos de texto del formulario.
+     */
     private fun limpiarCampos() {
         binding.apply {
             titleEditText.text.clear()
