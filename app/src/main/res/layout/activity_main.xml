@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Contenedor principal de la pantalla.
+     Usa ConstraintLayout para posicionar los elementos de forma flexible y eficiente. -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,12 +9,19 @@
     android:background="#F5F5F5"
     tools:context=".MainActivity">
 
+    <!-- Área de contenido desplazable.
+         Ocupa todo el espacio entre la parte superior de la pantalla y el botón de cierre. -->
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/close_app_button"
-        android:fillViewport="true">
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/close_app_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Contenedor que organiza todos los elementos uno debajo del otro (verticalmente). -->
         <LinearLayout
             android:id="@+id/main"
             android:layout_width="match_parent"
@@ -20,6 +29,8 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Tarjeta 1: Formulario para añadir un nuevo evento.
+                 CardView agrupa los elementos en una caja con sombra y bordes redondeados. -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,6 +75,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Tarjeta 2: Controles para filtrar y ordenar la lista de eventos. -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -113,6 +125,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Área de texto para mostrar la lista de eventos registrados. -->
             <TextView
                 android:id="@+id/events_list_text_view"
                 android:layout_width="match_parent"
@@ -122,12 +135,17 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- Botón fijo en la parte inferior para cerrar la aplicación. -->
     <Button
         android:id="@+id/close_app_button"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:text="Cerrar Aplicación" />
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Cerrar Aplicación"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
