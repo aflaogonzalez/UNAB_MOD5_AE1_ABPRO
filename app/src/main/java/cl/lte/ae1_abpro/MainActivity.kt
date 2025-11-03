@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var listaEventos = mutableListOf<Evento>()
+    private enum class SortCriteria { DATE, TITLE }
 
     /**
      * Función principal que se ejecuta al crear la pantalla.
@@ -43,11 +44,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.saveEventButton.setOnClickListener {
-            val titulo = binding.titleEditText.text.toString()
+            // Lee los datos de los campos de texto y quita espacios en blanco.
+            val tituloRaw = binding.titleEditText.text.toString().trim()
             val fecha = binding.dateEditText.text.toString()
-            val descripcion = binding.descriptionEditText.text.toString()
+            val descripcion = binding.descriptionEditText.text.toString().trim()
 
-            if (titulo.isNotEmpty() && fecha.isNotEmpty()) {
+            if (tituloRaw.isNotEmpty() && fecha.isNotEmpty()) {
+                // **Corrección para el ordenamiento alfabético**
+                // Se formatea el título a "Tipo Capital" (ej: "Hola mundo") para asegurar
+                // que el ordenamiento funcione correctamente sin importar cómo se escribió.
+                val titulo = tituloRaw.lowercase().replaceFirstChar { if (it.isLowerCase()) it.uppercaseChar() else it }
+
                 val nuevoEvento = Evento.crearEvento(titulo, fecha, descripcion.takeIf { it.isNotEmpty() })
                 listaEventos.add(nuevoEvento)
                 actualizarListaEventos()
@@ -63,9 +70,8 @@ class MainActivity : AppCompatActivity() {
             actualizarListaEventos(eventosFiltrados)
         }
 
-        // Al hacer clic en Ordenar, ahora se muestra un diálogo de selección.
         binding.sortButton.setOnClickListener {
-            showSortDialog()
+            showSortCriteriaDialog()
         }
 
         binding.clearButton.setOnClickListener {
@@ -79,27 +85,49 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Muestra un diálogo para que el usuario elija cómo ordenar la lista.
+     * Diálogo 1: Pregunta al usuario QUÉ quiere ordenar.
      */
-    private fun showSortDialog() {
+    private fun showSortCriteriaDialog() {
         val options = arrayOf("Por Fecha", "Por Título (A-Z)")
 
         AlertDialog.Builder(this)
-            .setTitle("Ordenar eventos por:")
+            .setTitle("Ordenar por:")
             .setItems(options) { _, which ->
-                val sortedList = when (which) {
-                    0 -> listaEventos.sortedBy { it.fecha }      // Opción 0: Ordenar por fecha
-                    1 -> listaEventos.sortedBy { it.titulo }      // Opción 1: Ordenar por título
-                    else -> listaEventos // Por si acaso, devuelve la lista sin cambios
-                }
-                actualizarListaEventos(sortedList)
+                val criteria = if (which == 0) SortCriteria.DATE else SortCriteria.TITLE
+                showSortOrderDialog(criteria)
             }
+            .setNegativeButton("Cancelar", null)
             .show()
     }
 
     /**
-     * Muestra un diálogo con un calendario para seleccionar una fecha.
+     * Diálogo 2: Pregunta al usuario CÓMO quiere ordenar (ascendente o descendente).
+     * @param criteria El criterio (Fecha o Título) seleccionado en el diálogo anterior.
      */
+    private fun showSortOrderDialog(criteria: SortCriteria) {
+        val orderOptions = arrayOf("Ascendente", "Descendente")
+
+        AlertDialog.Builder(this)
+            .setTitle("Seleccionar orden:")
+            .setItems(orderOptions) { _, which ->
+                val isAscending = which == 0
+
+                val sortedList = when (criteria) {
+                    SortCriteria.DATE -> {
+                        if (isAscending) listaEventos.sortedBy { it.fecha }
+                        else listaEventos.sortedByDescending { it.fecha }
+                    }
+                    SortCriteria.TITLE -> {
+                        if (isAscending) listaEventos.sortedBy { it.titulo }
+                        else listaEventos.sortedByDescending { it.titulo }
+                    }
+                }
+                actualizarListaEventos(sortedList)
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -115,10 +143,6 @@ class MainActivity : AppCompatActivity() {
         datePickerDialog.show()
     }
 
-    /**
-     * Actualiza el TextView en la pantalla para mostrar la lista de eventos actual.
-     * @param eventos La lista que se va a mostrar. Por defecto, usa la lista principal.
-     */
     private fun actualizarListaEventos(eventos: List<Evento> = listaEventos) {
         binding.eventsListTextView.run {
             if (eventos.isEmpty()) {
@@ -132,9 +156,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Limpia los campos de texto del formulario.
-     */
     private fun limpiarCampos() {
         binding.apply {
             titleEditText.text.clear()
